@@ -6,7 +6,7 @@ import logging
 from extrair_bioma import extrair_palavra
 from extrair_gpt import criar_tac
 from manipular_documento import substituir_textos_docx, gerar_nome_arquivo_unico
-from funçoes_bioma import realizar_calculo
+from funcoes_bioma import realizar_calculo
 from extenso import numero_completo_por_extenso
 from extrair_data import extracao_anos
 from dados_manager import DadosManager 
