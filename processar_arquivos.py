@@ -27,7 +27,7 @@ def processar_arquivo_alerta(caminho_arquivo):
     except Exception as e:
         logging.error(f'Erro ao processar arquivo de alerta: {str(e)}')
 
-def processar_arquivo_relatorio(caminho_arquivo):
+def processar_arquivo_relatorio(caminho_arquivo, caminho_tac):
     try:
         dicionario = criar_tac(caminho_arquivo)
         
@@ -47,17 +47,17 @@ def processar_arquivo_relatorio(caminho_arquivo):
         output_ext = '.docx'
         output_path = gerar_nome_arquivo_unico(output_base_name, output_ext, pasta_saida)
 
-        substituir_textos_docx('TAC.docx', dicionario, output_path)
+        substituir_textos_docx(caminho_tac, dicionario, output_path)
         logging.info(f'Relatório processado e salvo em: {output_path}')
     except Exception as e:
         logging.error(f'Erro ao processar arquivo de relatório: {str(e)}')
 
-def processar_arquivo(caminho_arquivo):
+def processar_arquivo(caminho_arquivo, caminho_tac):
     try:
         nome_arquivo = os.path.basename(caminho_arquivo)
         if nome_arquivo.startswith('ANEXO 01'):
             processar_arquivo_alerta(caminho_arquivo)
         elif nome_arquivo.startswith('Relatório'):
-            processar_arquivo_relatorio(caminho_arquivo)
+            processar_arquivo_relatorio(caminho_arquivo, caminho_tac)
     except Exception as e:
         logging.error(f'Erro ao processar arquivo: {str(e)}')

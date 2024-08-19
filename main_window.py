@@ -70,7 +70,7 @@ class MainWindow(QMainWindow):
     def iniciar_processamento(self):
         if self.pasta_selecionada and self.tac_arquivo_selecionado:
             self.status_label.setText(f'Processando pasta: {self.pasta_selecionada}')
-            self.thread = ProcessarPastaThread(self.pasta_selecionada)
+            self.thread = ProcessarPastaThread(self.pasta_selecionada, self.tac_arquivo_selecionado)
             self.thread.atualizacao_status.connect(self.atualizar_status)
             self.thread.progresso_atualizado.connect(self.atualizar_progresso)
             self.thread.processamento_concluido.connect(self.exibir_mensagem_conclusao)
