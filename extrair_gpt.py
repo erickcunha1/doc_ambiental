@@ -1,13 +1,14 @@
 import openai
 import ast
-from extrair_bioma import extract_text_from_pdf
+from complementares.extrair_bioma import extract_text_from_pdf
 from dotenv import load_dotenv
 import os
 from pprint import pprint
 
 
-load_dotenv()
-openai.api_key = os.getenv('CHAVE_OPENAI')
+# load_dotenv()
+# openai.api_key = os.getenv('CHAVE_OPENAI')
+openai.api_key = 'sk-svcacct-ayg5bCDRBfa4EPYHe7uk0q0mL8lknMVXRzvjUmrcmtD31c1n_KhCkMRQSYG7eXx20i09T3BlbkFJ1CVW5g72wiKftwLZJeUONHYTgKHL97xqGDjeYJDv7XukOByJxCdFHTxcIzU3L57APyMA'
 
 def extract_data_from_text(text):
     response = openai.ChatCompletion.create(

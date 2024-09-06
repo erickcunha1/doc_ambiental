@@ -1,12 +1,13 @@
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QLabel, QFileDialog, QVBoxLayout, QHBoxLayout, QWidget, QProgressBar
 from processar_pasta_thread import ProcessarPastaThread
-from dados_manager import DadosManager
+# from complementares.dados_manager import DadosManager
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.pasta_selecionada = None
-        self.tac_arquivo_selecionado = None
+        self.tac_arquivos_selecionados = []  # Lista para armazenar dois arquivos TAC
 
         self.init_ui()
 
@@ -54,23 +55,26 @@ class MainWindow(QMainWindow):
             self.verificar_selecao_completa()
 
     def selecionar_tac_escopo(self):
-        self.tac_arquivo_selecionado, _ = QFileDialog.getOpenFileName(self, 'Selecionar TAC Escopo', '', 'Documentos Word (*.docx)')
-        if self.tac_arquivo_selecionado:
-            self.status_label.setText(f'Arquivo TAC selecionado: {self.tac_arquivo_selecionado}')
-            print(self.tac_arquivo_selecionado)
+        # Permitir seleção de até 2 arquivos TAC
+        self.tac_arquivos_selecionados, _ = QFileDialog.getOpenFileNames(self, 'Selecionar TAC Escopo', '', 'Documentos Word (*.docx)', options=QFileDialog.DontUseNativeDialog)
+        if len(self.tac_arquivos_selecionados) > 2:
+            self.status_label.setText("Você só pode selecionar no máximo 2 arquivos TAC.")
+            self.tac_arquivos_selecionados = []
+        elif len(self.tac_arquivos_selecionados) > 0:
+            self.status_label.setText(f'Arquivos TAC selecionados: {", ".join(self.tac_arquivos_selecionados)}')
             self.verificar_selecao_completa()
 
     def verificar_selecao_completa(self):
-        if self.pasta_selecionada and self.tac_arquivo_selecionado:
-            self.status_label.setText(f'Selecionado: {self.pasta_selecionada} e {self.tac_arquivo_selecionado}')
+        if self.pasta_selecionada and len(self.tac_arquivos_selecionados) > 0:
+            self.status_label.setText(f'Selecionado: {self.pasta_selecionada} e {", ".join(self.tac_arquivos_selecionados)}')
             self.iniciar_button.setEnabled(True)  # Habilita o botão de iniciar processamento
         else:
             self.iniciar_button.setEnabled(False)  # Desabilita se faltar algo
 
     def iniciar_processamento(self):
-        if self.pasta_selecionada and self.tac_arquivo_selecionado:
+        if self.pasta_selecionada and len(self.tac_arquivos_selecionados) > 0:
             self.status_label.setText(f'Processando pasta: {self.pasta_selecionada}')
-            self.thread = ProcessarPastaThread(self.pasta_selecionada, self.tac_arquivo_selecionado)
+            self.thread = ProcessarPastaThread(self.pasta_selecionada, self.tac_arquivos_selecionados)
             self.thread.atualizacao_status.connect(self.atualizar_status)
             self.thread.progresso_atualizado.connect(self.atualizar_progresso)
             self.thread.processamento_concluido.connect(self.exibir_mensagem_conclusao)
