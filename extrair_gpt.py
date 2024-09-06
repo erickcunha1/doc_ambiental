@@ -6,9 +6,8 @@ import os
 from pprint import pprint
 
 
-# load_dotenv()
-# openai.api_key = os.getenv('CHAVE_OPENAI')
-openai.api_key = 'sk-svcacct-ayg5bCDRBfa4EPYHe7uk0q0mL8lknMVXRzvjUmrcmtD31c1n_KhCkMRQSYG7eXx20i09T3BlbkFJ1CVW5g72wiKftwLZJeUONHYTgKHL97xqGDjeYJDv7XukOByJxCdFHTxcIzU3L57APyMA'
+load_dotenv()
+openai.api_key = os.getenv('CHAVE_OPENAI')
 
 def extract_data_from_text(text):
     response = openai.ChatCompletion.create(
