@@ -16,6 +16,7 @@ class MainWindow(QMainWindow):
 
         # Configuração dos widgets
         self.status_label = QLabel('Nenhuma pasta ou arquivo TAC selecionado.', self)
+        self.status_label.setWordWrap(True)
         self.select_button = QPushButton('Selecionar Pasta', self)
         self.select_tac_button = QPushButton('Selecionar TAC Escopo', self)
         self.iniciar_button = QPushButton('Iniciar Processamento', self)
@@ -66,7 +67,7 @@ class MainWindow(QMainWindow):
 
     def verificar_selecao_completa(self):
         if self.pasta_selecionada and len(self.tac_arquivos_selecionados) > 0:
-            self.status_label.setText(f'Selecionado: {self.pasta_selecionada} e {", ".join(self.tac_arquivos_selecionados)}')
+            self.status_label.setText(f"Pasta selecionada: {self.pasta_selecionada} e\n\nTac(s) selecionados: {", ".join(self.tac_arquivos_selecionados)}")
             self.iniciar_button.setEnabled(True)  # Habilita o botão de iniciar processamento
         else:
             self.iniciar_button.setEnabled(False)  # Desabilita se faltar algo

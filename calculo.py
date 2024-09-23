@@ -102,13 +102,8 @@ def calcular_valor_dano_irreversivel(valor_dano_reversivel, custo_restauracao):
 
 def realizar_calculo(bioma, area_afetada, tempo_n1):
     # Obtenção dos parâmetros n2 e p do bioma
-    # n2, p = biomas[bioma]
-    n2 = biomas[bioma][0]
-    p = biomas[bioma][1]
-    
-    # Valores constantes fornecidos no documento
-    VET1 = 1597  # Valor Econômico Total para n1 (Int.$/ha/ano)
-    VET2 = 1597  # Valor Econômico Total para n2 (Int.$/ha/ano)
+
+    n2, p, VET1, VET2 = biomas[bioma]
     i = 0.12  # Taxa de juros (12% ao ano)
     PPP = 2.583  # Paridade de Poder de Compra (Int.$ para R$)
     
@@ -128,8 +123,8 @@ def realizar_calculo(bioma, area_afetada, tempo_n1):
     return valor_dano_reversivel
 
 # Exemplo de uso da função
-bioma = 'Cerrado'
-area_afetada = 28.88  # em hectares
+bioma = 'Caatinga'
+area_afetada = 20.49  # em hectares
 tempo_n1 = 2  # tempo desde o dano até a data atual em anos
 
 valor_reversivel = realizar_calculo(bioma, area_afetada, tempo_n1)

@@ -14,7 +14,7 @@ def extract_data_from_text(text):
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "Você é um assistente que extrai informações específicas de documentos."},
-            {"role": "user", "content": f"Extraia as seguintes informações deste documento e apresente-as no formato de um dicionário Python: nome do proprietário(Requerente do cadastro, que esta na parte 2.4), município, área (em hectares), código CAR, valor (em reais), longitude e latitude, o valor da reserva legal, CPF/CNPJ e Denominação do imóvel rural e a area do imovel rural. Certifique-se de que os valores estejam corretos e bem formatados (o nome das chaves devem ser as seguintes: proprietario, municipio, area, codigo_CAR, valor, longitude, latitude, reserva_legal, cpf, denominacao e total_area):\n\n{text}"}
+            {"role": "user", "content": f"Extraia as seguintes informações deste documento e apresente-as no formato de um dicionário Python: nome do proprietário(Requerente do cadastro, que esta na parte 2.4), município, área (em hectares), código CAR, valor (em reais), longitude e latitude, o valor da reserva legal, CPF/CNPJ e Denominação do imóvel rural, area do imovel rural, número do CEFIR e número do alerta. Certifique-se de que os valores estejam corretos e bem formatados (o nome das chaves devem ser as seguintes: proprietario, municipio, area, codigo_CAR, valor, longitude, latitude, reserva_legal, cpf, denominacao e total_area, CEFIR, numero_alerta):\n\n{text}"}
         ]
     )
     return response.choices[0].message['content']
@@ -51,8 +51,10 @@ def criar_tac(caminho):
         "$app": extracted_data.get('area', ''),
         "$cpf": extracted_data.get('cpf', ''),
         "$compromitente": extracted_data.get('proprietario', ''),
-        "$denominacao": extracted_data.get('denominacao'),
-        '$total_area': extracted_data.get('total_area'),
+        "$denominacao": extracted_data.get('denominacao', ''),
+        "$total_area": extracted_data.get('total_area', ''),
+        "$CEFIR": extracted_data.get('CEFIR', ''),
+        "$numero_alerta": extracted_data.get('numero_alerta', ''),
         "$valor": None,
         "$extenso": None,
     }
