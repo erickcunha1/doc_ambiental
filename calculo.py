@@ -119,14 +119,14 @@ def realizar_calculo(bioma, area_afetada, tempo_n1):
     
     # Cálculo final do valor do dano reversível
     valor_dano_reversivel = calcular_valor_dano_reversivel(area_afetada, VETP_reais)
-    print(valor_dano_reversivel)
+    # print(valor_dano_reversivel)
     return valor_dano_reversivel
 
 # Exemplo de uso da função
-bioma = 'Caatinga'
-area_afetada = 20.49  # em hectares
-tempo_n1 = 2  # tempo desde o dano até a data atual em anos
+# bioma = 'Caatinga'
+# area_afetada = 20.49  # em hectares
+# tempo_n1 = 2  # tempo desde o dano até a data atual em anos
 
-valor_reversivel = realizar_calculo(bioma, area_afetada, tempo_n1)
-print(f"Valor do Dano Reversível: R$ {valor_reversivel}")
+# valor_reversivel = realizar_calculo(bioma, area_afetada, tempo_n1)
+# print(f"Valor do Dano Reversível: R$ {valor_reversivel}")
 

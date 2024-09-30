@@ -2,19 +2,17 @@ import openai
 import ast
 from complementares.extrair_bioma import extract_text_from_pdf
 from dotenv import load_dotenv
-import os
 from pprint import pprint
 
-
-load_dotenv()
-openai.api_key = os.getenv('CHAVE_OPENAI')
+# load_dotenv()
+# openai.api_key = os.getenv('CHAVE_OPENAI')
 
 def extract_data_from_text(text):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "Você é um assistente que extrai informações específicas de documentos."},
-            {"role": "user", "content": f"Extraia as seguintes informações deste documento e apresente-as no formato de um dicionário Python: nome do proprietário(Requerente do cadastro, que esta na parte 2.4), município, área (em hectares), código CAR, valor (em reais), longitude e latitude, o valor da reserva legal, CPF/CNPJ e Denominação do imóvel rural, area do imovel rural, número do CEFIR e número do alerta. Certifique-se de que os valores estejam corretos e bem formatados (o nome das chaves devem ser as seguintes: proprietario, municipio, area, codigo_CAR, valor, longitude, latitude, reserva_legal, cpf, denominacao e total_area, CEFIR, numero_alerta):\n\n{text}"}
+            {"role": "user", "content": f"Extraia as seguintes informações deste documento e apresente-as no formato de um dicionário Python: nome do requerente do cadastro(), município, área (em hectares), código CAR, valor (em reais), longitude e latitude, o valor da reserva legal, CPF/CNPJ e Denominação do imóvel rural, area do imovel rural, número do CEFIR e número do alerta. Certifique-se de que os valores estejam corretos e bem formatados (o nome das chaves devem ser as seguintes: proprietario, municipio, area, codigo_CAR, valor, longitude, latitude, reserva_legal, cpf, denominacao e total_area, CEFIR, numero_alerta):\n\n{text}"}
         ]
     )
     return response.choices[0].message['content']
@@ -58,5 +56,5 @@ def criar_tac(caminho):
         "$valor": None,
         "$extenso": None,
     }
-    pprint(substituicoes)
+    # pprint(substituicoes)
     return substituicoes
