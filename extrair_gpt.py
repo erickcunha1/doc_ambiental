@@ -2,10 +2,10 @@ import openai
 import ast
 from complementares.extrair_bioma import extract_text_from_pdf
 from dotenv import load_dotenv
-from pprint import pprint
+import os
 
-# load_dotenv()
-# openai.api_key = os.getenv('CHAVE_OPENAI')
+load_dotenv()
+openai.api_key = os.getenv('CHAVE_OPENAI')
 
 def extract_data_from_text(text):
     response = openai.ChatCompletion.create(
@@ -56,5 +56,4 @@ def criar_tac(caminho):
         "$valor": None,
         "$extenso": None,
     }
-    # pprint(substituicoes)
     return substituicoes

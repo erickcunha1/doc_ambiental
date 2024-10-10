@@ -4,7 +4,7 @@ from main_window import MainWindow
 from datetime import datetime
 
 def verificar_data_limite():
-    data_limite = datetime(2024, 10, 5)  # Define a data limite
+    data_limite = datetime(2024, 10, 15)  # Define a data limite
     data_atual = datetime.now()  # Obtém a data atual
     
     if data_atual > data_limite:  # Verifica se a data atual ultrapassa a data limite

@@ -57,7 +57,8 @@ def processar_arquivo_alerta(caminho_arquivo):
         dados_manager.set_bioma(bioma)
 
         # Extraindo a data e calculando a diferença em relação à data atual
-        data_extraida = extracao_anos(caminho_arquivo)  # Supondo que esta função retorne uma data completa
+        data_extraida = extracao_anos(caminho_arquivo)
+        dados_manager.set_data(data_extraida) # Supondo que esta função retorne uma data completa
         data_atual = datetime.date.today()
 
         # Calculando a diferença
@@ -75,7 +76,6 @@ def processar_arquivo_alerta(caminho_arquivo):
 
         # Calcula a representação decimal dos anos e meses com uma casa decimal
         anos_meses = round(anos_diferenca + (meses_diferenca / 12), 1)
-        print(anos_meses)
 
         # Armazena a representação decimal no gerenciador de dados
         dados_manager.set_anos(anos_meses)
@@ -96,12 +96,17 @@ def processar_arquivo_relatorio(caminho_arquivo, caminho_tac_lista):
 
                 # Recupera o bioma e a área afetada
                 bioma = dados_manager.get_bioma()
-                area_afetada = dicionario['$area']
-                # Obtém os anos para o cálculo
+                area_afetada = dicionario.get('$area')
+                print('ola 1')  # Use 'get' para evitar exceções se a chave não existir
                 n1 = dados_manager.get_anos()
-                # Realiza o cálculo do valor baseado no bioma, área e tempo
-                valor = realizar_calculo(bioma, area_afetada, n1)
+                print('OLA 2')
                 
+                # Aqui está a correção:
+                ano = dados_manager.get_data().year  # Corrigido para pegar o ano corretamente
+                
+                # Realiza o cálculo do valor baseado no bioma, área, tempo e ano
+                valor = realizar_calculo(bioma, area_afetada, n1, ano)
+                print('OLA 4')
                 dicionario['$valor'] = valor
 
                 # Transforma o valor em extenso
@@ -127,9 +132,12 @@ def processar_arquivo_relatorio(caminho_arquivo, caminho_tac_lista):
                 
                 # Se o processamento for bem-sucedido, define sucesso como True para sair do loop
                 sucesso = True
+            except ValueError as ve:
+                logging.error(f'Valor inválido encontrado: {str(ve)}')
+                print(f"Erro no processamento devido a: {str(ve)}")
+                sucesso = True  # Evita o loop infinito quando um valor inválido é encontrado
             except Exception as e:
                 logging.error(f'Erro ao processar arquivo de relatório {caminho_tac}: {str(e)}')
-                # Continua tentando até processar corretamente
                 print(f"Tentando novamente o arquivo {caminho_tac} devido ao erro...")
 
 def processar_arquivo(caminho_arquivo, caminho_tac_lista):
