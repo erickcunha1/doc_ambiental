@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import sys
 from complementares.dicionarios import biomas
-
+import datetime
 def calcular_VETP1(VET1, i, n1, p):
     """
     Calcula o Valor Econômico Total Presente 1 (VETP1).
@@ -33,6 +33,7 @@ def calcular_VETP2(VET2, i, n2, p):
     Retorna:
         float: Valor de VETP2 em Int.$/ha
     """
+    print(VET2)
     VETP2 = VET2 * (((1 + i) ** n2 - 1) / (2 * i * (1 + i) ** n2)) * (n2 / p)
     return VETP2
 
@@ -94,7 +95,11 @@ def realizar_calculo(bioma, area_afetada, tempo_n1, ano):
     # Obtenção dos parâmetros n2 e p do bioma
 
     n2, p = biomas[bioma]
-    VET1 = VET2 = extrair_valor_data(bioma, ano)
+    data_atual = datetime.date.today()
+    ano_atual = data_atual.year
+
+    VET1 =  extrair_valor_data(bioma, ano)
+    VET2 = extrair_valor_data(bioma, int(ano_atual))
     i = 0.12  # Taxa de juros (12% ao ano)
     
     # Cálculos intermediários

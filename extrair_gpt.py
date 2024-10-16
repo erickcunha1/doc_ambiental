@@ -4,6 +4,8 @@ import json
 from complementares.extrair_bioma import extract_text_from_pdf
 from dotenv import load_dotenv
 import os
+from pprint import pprint
+
 
 load_dotenv()
 openai.api_key = os.getenv('CHAVE_OPENAI')
@@ -65,5 +67,5 @@ def criar_documento(caminho):
         "$valor": None,
         "$extenso": None,
     }
-
+    pprint(substituicoes)
     return substituicoes
