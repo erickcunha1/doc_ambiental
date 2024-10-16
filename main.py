@@ -18,7 +18,6 @@ def verificar_data_limite():
 
 def main():
     app = QApplication(sys.argv)  # Cria a QApplication primeiro
-    
     if not verificar_data_limite():  # Verifica a data limite, se expirada, não continua
         sys.exit()  # Encerra o programa se a data limite tiver sido ultrapassada
     

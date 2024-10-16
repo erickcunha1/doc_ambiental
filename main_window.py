@@ -1,7 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QLabel, QFileDialog, QVBoxLayout, QHBoxLayout, QWidget, QProgressBar
+from PyQt5.QtGui import QPixmap
 from processar_pasta_thread import ProcessarPastaThread
-# from complementares.dados_manager import DadosManager
-
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -17,6 +16,7 @@ class MainWindow(QMainWindow):
         # Configuração dos widgets
         self.status_label = QLabel('Nenhuma pasta ou arquivo TAC selecionado.', self)
         self.status_label.setWordWrap(True)
+        
         self.select_button = QPushButton('Selecionar Pasta', self)
         self.select_tac_button = QPushButton('Selecionar TAC Escopo', self)
         self.iniciar_button = QPushButton('Iniciar Processamento', self)
@@ -24,6 +24,13 @@ class MainWindow(QMainWindow):
         self.progress_bar = QProgressBar(self)
         self.progress_bar.setValue(0)
         self.progress_bar.setMaximum(100)
+
+        # QLabel para exibir a imagem
+        self.image_label = QLabel(self)
+        pixmap = QPixmap('img/imagem.png')  # Substitua pelo caminho da sua imagem
+        self.image_label.setPixmap(pixmap)
+        self.image_label.setScaledContents(True)  # Faz a imagem escalar para caber no QLabel
+        self.image_label.setFixedSize(400, 200)   # Define um tamanho fixo para o QLabel (opcional)
 
         # Conectando botões aos métodos
         self.select_button.clicked.connect(self.selecionar_pasta)
@@ -38,6 +45,7 @@ class MainWindow(QMainWindow):
 
         # Layout vertical para a estrutura geral
         layout = QVBoxLayout()
+        layout.addWidget(self.image_label)  # Adiciona o QLabel da imagem ao layout
         layout.addWidget(self.status_label)
         layout.addLayout(button_layout)
         layout.addWidget(self.progress_bar)
@@ -45,7 +53,7 @@ class MainWindow(QMainWindow):
         container = QWidget()
         container.setLayout(layout)
         self.setCentralWidget(container)
-        self.resize(500, 200)
+        self.resize(500, 400)
 
         self.thread = None  # Inicializa a thread como None
 

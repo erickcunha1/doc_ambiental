@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
+import os
+import sys
 from complementares.dicionarios import biomas
 
 def calcular_VETP1(VET1, i, n1, p):
@@ -61,8 +63,27 @@ def calcular_valor_dano_reversivel(A, VETP_reais):
     valor_dano = A * VETP_reais
     return f'{valor_dano:,.2f}'
 
+def caminho_absoluto(relativo):
+    # Verifica se está rodando dentro de um executável criado pelo PyInstaller
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relativo)
+    # Caso contrário, usa o diretório atual (desenvolvimento)
+    return os.path.join(os.path.abspath("."), relativo)
+
+# Função que extrai o valor do arquivo Excel
 def extrair_valor_data(bioma, ano):
-    tabela = pd.read_excel('valores_2.xlsx')
+    # Aqui, usamos o caminho absoluto para o arquivo 'valores_2.xlsx'
+    arquivo_excel = caminho_absoluto('valores_2.xlsx')
+    
+    # Verifica se o arquivo existe antes de tentar carregá-lo
+    if not os.path.exists(arquivo_excel):
+        print(f"Arquivo {arquivo_excel} não encontrado!")
+        return None
+
+    # Carrega o arquivo Excel
+    tabela = pd.read_excel(arquivo_excel)
+    
+    # Extrai o valor com base no bioma e ano fornecidos
     valor = tabela.loc[tabela['Ano'] == ano, bioma].values
     if len(valor) > 0:
         return valor[0]
