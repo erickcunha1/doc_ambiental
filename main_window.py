@@ -1,6 +1,8 @@
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QLabel, QFileDialog, QVBoxLayout, QHBoxLayout, QWidget, QProgressBar
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QLabel, QFileDialog, QVBoxLayout, QHBoxLayout, QWidget, QProgressBar, QFrame, QMessageBox
+from PyQt5.QtGui import QPixmap, QFont, QIcon
+from PyQt5.QtCore import Qt
 from processar_pasta_thread import ProcessarPastaThread
+from calculo import caminho_absoluto
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -12,25 +14,58 @@ class MainWindow(QMainWindow):
 
     def init_ui(self):
         self.setWindowTitle('Processador de Arquivos TAC')
+        self.setStyleSheet("background-color: #f0f0f0;")  # Fundo padrão
 
         # Configuração dos widgets
         self.status_label = QLabel('Nenhuma pasta ou arquivo TAC selecionado.', self)
         self.status_label.setWordWrap(True)
-        
+        self.status_label.setFont(QFont("Arial", 10))
+
         self.select_button = QPushButton('Selecionar Pasta', self)
         self.select_tac_button = QPushButton('Selecionar TAC Escopo', self)
-        self.iniciar_button = QPushButton('Iniciar Processamento', self)
+        self.iniciar_button = QPushButton('Iniciar Processamento')
         self.iniciar_button.setEnabled(False)  # Desabilitado até que os dois arquivos sejam selecionados
         self.progress_bar = QProgressBar(self)
         self.progress_bar.setValue(0)
         self.progress_bar.setMaximum(100)
 
         # QLabel para exibir a imagem
+        arquivo_imagem = caminho_absoluto('imagem/imagem.png')
+        pixmap = QPixmap(arquivo_imagem)
         self.image_label = QLabel(self)
-        pixmap = QPixmap('img/imagem.png')  # Substitua pelo caminho da sua imagem
         self.image_label.setPixmap(pixmap)
-        self.image_label.setScaledContents(True)  # Faz a imagem escalar para caber no QLabel
-        self.image_label.setFixedSize(400, 200)   # Define um tamanho fixo para o QLabel (opcional)
+        self.image_label.setScaledContents(True)
+
+        # Estilo dos botões
+        button_style = """
+            QPushButton {
+                background-color: #007BFF; 
+                color: white; 
+                font-weight: bold; 
+                border: none; 
+                border-radius: 10px; 
+                padding: 10px; 
+            }
+            QPushButton:hover {
+                background-color: #0056b3; 
+            }
+            QPushButton:pressed {
+                background-color: #004085; 
+            }
+        """
+
+        # Adicionando ícones aos botões (supondo que você tenha ícones disponíveis)
+        folder_ico = caminho_absoluto('icones/folder.ico')
+        file_ico = caminho_absoluto('icones/files.ico')
+        play_ico = caminho_absoluto('icones/play.png')
+
+        self.select_button.setIcon(QIcon(folder_ico))  # Exemplo de ícone
+        self.select_tac_button.setIcon(QIcon(file_ico))  # Exemplo de ícone
+        self.iniciar_button.setIcon(QIcon(play_ico))  # Exemplo de ícone
+
+        self.select_button.setStyleSheet(button_style)
+        self.select_tac_button.setStyleSheet(button_style)
+        self.iniciar_button.setStyleSheet(button_style)
 
         # Conectando botões aos métodos
         self.select_button.clicked.connect(self.selecionar_pasta)
@@ -45,7 +80,7 @@ class MainWindow(QMainWindow):
 
         # Layout vertical para a estrutura geral
         layout = QVBoxLayout()
-        layout.addWidget(self.image_label)  # Adiciona o QLabel da imagem ao layout
+        layout.addWidget(self.image_label)
         layout.addWidget(self.status_label)
         layout.addLayout(button_layout)
         layout.addWidget(self.progress_bar)
@@ -54,6 +89,9 @@ class MainWindow(QMainWindow):
         container.setLayout(layout)
         self.setCentralWidget(container)
         self.resize(500, 400)
+
+        # Definindo a cor de fundo da janela
+        self.setStyleSheet("background-color: #e1e9ed;")
 
         self.thread = None  # Inicializa a thread como None
 
@@ -75,7 +113,7 @@ class MainWindow(QMainWindow):
 
     def verificar_selecao_completa(self):
         if self.pasta_selecionada and len(self.tac_arquivos_selecionados) > 0:
-            self.status_label.setText(f"Pasta selecionada: {self.pasta_selecionada} e\n\nTac(s) selecionados: {", ".join(self.tac_arquivos_selecionados)}")
+            self.status_label.setText(f"Pasta selecionada: {self.pasta_selecionada} e\n\nTac(s) selecionados: {', '.join(self.tac_arquivos_selecionados)}")
             self.iniciar_button.setEnabled(True)  # Habilita o botão de iniciar processamento
         else:
             self.iniciar_button.setEnabled(False)  # Desabilita se faltar algo
@@ -96,4 +134,5 @@ class MainWindow(QMainWindow):
         self.progress_bar.setValue(valor)
 
     def exibir_mensagem_conclusao(self):
+        QMessageBox.information(self, "Concluído", "Documento(s) gerado(s) com sucesso!", QMessageBox.Ok)
         self.status_label.setText("Documento(s) gerado(s) com sucesso!")

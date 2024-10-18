@@ -2,8 +2,10 @@
 import pandas as pd
 import os
 import sys
-from complementares.dicionarios import biomas
 import datetime
+from complementares.dicionarios import biomas
+
+
 def calcular_VETP1(VET1, i, n1, p):
     """
     Calcula o Valor Econômico Total Presente 1 (VETP1).
@@ -74,7 +76,7 @@ def caminho_absoluto(relativo):
 # Função que extrai o valor do arquivo Excel
 def extrair_valor_data(bioma, ano):
     # Aqui, usamos o caminho absoluto para o arquivo 'valores_2.xlsx'
-    arquivo_excel = caminho_absoluto('valores_2.xlsx')
+    arquivo_excel = caminho_absoluto('complementares/valores_2.xlsx')
     
     # Verifica se o arquivo existe antes de tentar carregá-lo
     if not os.path.exists(arquivo_excel):
