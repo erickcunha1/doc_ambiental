@@ -1,7 +1,7 @@
 import os
 import datetime
 import logging
-from complementares.extrair_bioma import extrair_palavra
+from complementares.extrair_bioma import extrair_palavra, extrair_item_anterior
 from extrair_gpt import criar_documento
 from complementares.manipular_documento import substituir_textos_docx, gerar_nome_arquivo_unico
 from calculo import realizar_calculo
@@ -11,7 +11,7 @@ from complementares.dados_manager import DadosManager
 from docx import Document
 from docx.shared import Pt
 from extrair_nome import extrair_linha_por_referencia
-
+# from complementares.palavra_anterior import extrair_item_anterior
 
 # Inicializando o gerenciador de dados
 dados_manager = DadosManager()
@@ -92,11 +92,10 @@ def criar_dicionario_tac(caminho_arquivo):
         n1 = dados_manager.get_anos()
         ano = dados_manager.get_data().year
 
-        valor = realizar_calculo(bioma, area_afetada, n1, ano)
-        print(valor)
-        dicionario['$valor'] = valor
+        # dicionario['$CEFIR'] = extrair_item_anterior('2.14. “Relatório CEFIR” (Anexo', caminho_arquivo)
+        valor = dicionario['$valor'] = realizar_calculo(bioma, area_afetada, n1, ano)
         dicionario['$extenso'] = numero_completo_por_extenso(valor)
-        dicionario['$proprietario'] = extrair_linha_por_referencia(caminho_arquivo, '2.4. Requerente do cadastro', 11)
+        dicionario['$proprietario'] = extrair_linha_por_referencia(caminho_arquivo, '2.4. Requerente do cadastro')
 
         return dicionario
     except Exception as e:
@@ -104,27 +103,46 @@ def criar_dicionario_tac(caminho_arquivo):
         return None
 
 def processar_arquivo_relatorio(caminho_arquivo, caminho_tac_lista):
-    """Processa o arquivo de relatório, aplicando substituições em cada TAC na lista."""
+    """
+    Processa o relatório TAC, substituindo os valores no documento e salvando a saída.
+    
+    Parâmetros:
+        caminho_arquivo (str): Caminho do arquivo de entrada.
+        caminho_tac_lista (list): Lista de caminhos para os arquivos TAC.
+    """
     try:
+        # Tenta criar o dicionário TAC
+        dicionario = None
+        while dicionario is None:
+            try:
+                dicionario = criar_dicionario_tac(caminho_arquivo)
+            except Exception as e:
+                logging.error(f'Erro ao criar dicionário TAC: {str(e)}')
+                print(f"Tentando novamente criar o dicionário TAC devido ao erro: {str(e)}")
+
+        # Processa cada caminho TAC na lista
         for caminho_tac in caminho_tac_lista:
             sucesso = False
+            print(caminho_arquivo)
             while not sucesso:
                 try:
-                    dicionario = criar_dicionario_tac(caminho_arquivo)
                     if dicionario:
                         output_path = gerar_caminho_saida(caminho_arquivo, caminho_tac)
                         substituir_textos_no_documento(caminho_tac, dicionario, output_path)
                         logging.info(f'Relatório processado e salvo em: {output_path}')
-                    sucesso = True
+                        sucesso = True
                 except ValueError as ve:
-                    logging.error(f'Valor inválido encontrado: {str(ve)}')
-                    print(f"Erro no processamento devido a: {str(ve)}")
-                    sucesso = True
+                    logging.error(f'Valor inválido encontrado ao processar {caminho_tac}: {str(ve)}')
+                    print(f"Erro de valor inválido ao processar {caminho_tac}: {str(ve)}")
+                    sucesso = True  # Continua, já que o erro foi tratado
                 except Exception as e:
                     logging.error(f'Erro ao processar arquivo de relatório {caminho_tac}: {str(e)}')
-                    print(f"Tentando novamente o arquivo {caminho_tac} devido ao erro...")
+                    print(f"Tentando novamente o arquivo {caminho_tac} devido ao erro: {str(e)}")
+                    # O loop continuará até que o sucesso seja True
     except Exception as e:
-        logging.error(f'Erro ao processar relatório: {str(e)}')
+        logging.error(f'Erro inesperado ao processar relatório: {str(e)}')
+        print(f"Erro inesperado ao processar relatório: {str(e)}")
+
 
 def gerar_caminho_saida(caminho_arquivo, caminho_tac):
     """Gera o nome do arquivo de saída com base no modelo de TAC."""

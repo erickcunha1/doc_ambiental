@@ -4,6 +4,8 @@ import json
 from complementares.extrair_bioma import extract_text_from_pdf
 from dotenv import load_dotenv
 import os
+from pprint import pprint
+
 
 # load_dotenv()
 # openai.api_key = os.getenv('CHAVE_OPENAI')
@@ -59,10 +61,11 @@ def criar_documento(caminho):
         "$compromitente": extracted_data.get('proprietario', ''),
         "$denominacao": extracted_data.get('denominacao', ''),
         "$total_area": extracted_data.get('total_area', ''),
-        "$CEFIR": extracted_data.get('CEFIR', ''),
+        "$CEFIR": None,
         "$numero_alerta": extracted_data.get('numero_alerta', ''),
         "$promotoria": extracted_data.get('promotoria', ''),
         "$valor": None,
         "$extenso": None,
     }
+    # pprint(substituicoes)
     return substituicoes
