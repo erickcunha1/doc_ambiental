@@ -92,7 +92,7 @@ def criar_dicionario_tac(caminho_arquivo):
         n1 = dados_manager.get_anos()
         ano = dados_manager.get_data().year
 
-        # dicionario['$CEFIR'] = extrair_item_anterior('2.14. “Relatório CEFIR” (Anexo', caminho_arquivo)
+        dicionario['$CEFIR'] = extrair_item_anterior('2.14. “Relatório CEFIR” (Anexo', caminho_arquivo)
         valor = dicionario['$valor'] = realizar_calculo(bioma, area_afetada, n1, ano)
         dicionario['$extenso'] = numero_completo_por_extenso(valor)
         dicionario['$proprietario'] = extrair_linha_por_referencia(caminho_arquivo, '2.4. Requerente do cadastro')
@@ -145,16 +145,34 @@ def processar_arquivo_relatorio(caminho_arquivo, caminho_tac_lista):
 
 
 def gerar_caminho_saida(caminho_arquivo, caminho_tac):
-    """Gera o nome do arquivo de saída com base no modelo de TAC."""
-    pasta_saida = os.path.dirname(caminho_arquivo)
-    inicio = pasta_saida.find("Alerta") + len("Alerta ")
-    numeros_alerta = pasta_saida[inicio:inicio + 4]
-    output_ext = '.docx'
+    """Gera o nome do arquivo de saída com base no modelo de TAC, sem depender de 'Alerta'."""
+    try:
+        # Extrai a pasta de saída
+        pasta_saida = os.path.dirname(caminho_arquivo)
 
-    modelo = 'COMPENSAÇÃO' if 'COMPENSAÇÃO' in caminho_tac else 'RECUPERAÇÃO'
-    output_base_name = f'TAC_{numeros_alerta} - {modelo}'
-    
-    return gerar_nome_arquivo_unico(output_base_name, output_ext, pasta_saida)
+        # Tenta extrair um número de alerta baseado no nome da pasta ou do arquivo
+        nome_pasta = os.path.basename(pasta_saida)
+        nome_arquivo = os.path.basename(caminho_arquivo)
+
+        # Procura um número no nome do arquivo ou da pasta
+        numeros_alerta = ''.join(filter(str.isdigit, nome_arquivo)) or ''.join(filter(str.isdigit, nome_pasta))
+
+        # Se não houver número, usa a data atual como um fallback
+        if not numeros_alerta:
+            numeros_alerta = datetime.datetime.now().strftime("%Y%m%d")
+
+        # Define o modelo baseado no conteúdo do caminho TAC
+        modelo = 'COMPENSAÇÃO' if 'COMPENSAÇÃO' in caminho_tac else 'RECUPERAÇÃO'
+        output_base_name = f'TAC_{numeros_alerta} - {modelo}'
+        output_ext = '.docx'
+
+        # Gera o caminho de saída usando a função auxiliar gerar_nome_arquivo_unico
+        output_path = gerar_nome_arquivo_unico(output_base_name, output_ext, pasta_saida)
+        
+        return output_path
+    except Exception as e:
+        logging.error(f'Erro ao gerar caminho de saída: {str(e)}')
+        raise
 
 def processar_arquivo(caminho_arquivo, caminho_tac_lista):
     """Determina o tipo de arquivo e o processa adequadamente."""

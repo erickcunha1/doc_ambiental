@@ -91,9 +91,10 @@ def calcular_valor_dano_reversivel(A, VETP_reais):
     """
     # Se A for string, remove o sufixo e converte para float
     if isinstance(A, str):
-        A = remover_sufixo_ha(A)
-        
-    print(A)
+        try:
+            A = remover_sufixo_ha(A)
+        except:
+            A = 0
     
     # Verifica se A e VETP_reais são valores numéricos
     if not isinstance(A, (int, float)) or not isinstance(VETP_reais, (int, float)):
@@ -151,17 +152,19 @@ def realizar_calculo(bioma, area_afetada, tempo_n1, ano):
 
     # Cálculo final do valor do dano reversível
     valor_dano_reversivel = calcular_valor_dano_reversivel(area_afetada, VETP)
-    valores = {
-        'Tempo de regeneracao (n2)': n2,
-        'Tempo': p,
-        'Bioma': bioma,
-        'VETP': VETP,
-        'VET1': VET1,
-        'VET2': VET2,
-        'VETP1': VETP1,
-        'VETP2': VETP2,
-        'Tempo entre dano e data atual (n1)': tempo_n1,
-        'Area Afetada': area_afetada
-    }
+    # valores = {
+    #     'Tempo de regeneracao (n2)': n2,
+    #     'Tempo': p,
+    #     'Bioma': bioma,
+    #     'VETP': VETP,
+    #     'VET1': VET1,
+    #     'VET2': VET2,
+    #     'VETP1': VETP1,
+    #     'VETP2': VETP2,
+    #     'Tempo entre dano e data atual (n1)': tempo_n1,
+    #     'Area Afetada': area_afetada
+    # }
     # pprint(valores)
+    # print()
+    # print()
     return valor_dano_reversivel
